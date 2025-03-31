@@ -12,7 +12,7 @@ const Todos = () => {
   const [currentTodo, setCurrentTodo] = useState({});
 
   const addNewTodo = newTodo => {
-    if (findTodo(newTodo)) {
+    if (findTodo(newTodo.text)) {
       alert('This todo already exists!');
       return;
     }
