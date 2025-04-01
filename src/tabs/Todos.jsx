@@ -6,40 +6,37 @@ import EditForm from '../components/EditForm/EditForm';
 
 const Todos = () => {
   const [todos, setTodos] = useState(
-    () => JSON.parse(localStorage.getItem('todo-key')) ?? []
+    () => JSON.parse(localStorage.getItem('todos-key')) ?? []
   );
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodo, setCurrentTodo] = useState({});
 
   const addNewTodo = newTodo => {
     if (findTodo(newTodo.text)) {
-      alert('This todo already exists!');
+      alert('Already extist');
       return;
     }
 
-    setTodos(prevTodos => {
-      return [...prevTodos, newTodo];
+    setTodos(prevState => {
+      return [...prevState, newTodo];
     });
   };
 
   useEffect(() => {
-    localStorage.setItem('todo-key', JSON.stringify(todos));
+    localStorage.setItem('todos-key', JSON.stringify(todos));
   }, [todos]);
 
   const deleteTodo = todoID => {
-    setTodos(prevTodos => {
-      return prevTodos.filter(todo => todo.id !== todoID);
+    setTodos(prevState => {
+      return prevState.filter(todo => todo.id !== todoID);
     });
   };
 
-  const handleEditTodos = todo => {
+  const hasTodo = todos.length > 0;
+
+  const editTodo = todo => {
     setIsEditing(true);
     setCurrentTodo(todo);
-  };
-
-  const canselUpdate = () => {
-    setIsEditing(false);
-    setCurrentTodo({});
   };
 
   const updateTodo = updateText => {
@@ -53,27 +50,30 @@ const Todos = () => {
     setCurrentTodo({});
   };
 
+  const cancelUpdate = () => {
+    setIsEditing(false);
+    setCurrentTodo({});
+  };
+
   const findTodo = text => {
     return todos.some(todo => todo.text.toLowerCase() === text.toLowerCase());
   };
 
-  const hasTodos = todos.length > 0;
-
   return (
     <>
+      {!isEditing && <Form onSubmit={addNewTodo} />}
       {isEditing && (
         <EditForm
-          defaultValue={currentTodo.text}
           updateTodo={updateTodo}
-          cancelUpdate={canselUpdate}
+          cancelUpdate={cancelUpdate}
+          defaultValue={currentTodo.text}
         />
       )}
-      {!isEditing && <Form onSubmit={addNewTodo} />}
 
-      {hasTodos && (
-        <TodoList data={todos} onDelete={deleteTodo} onEdit={handleEditTodos} />
+      {hasTodo && (
+        <TodoList data={todos} onDelete={deleteTodo} onEdit={editTodo} />
       )}
-      {!hasTodos && <Text textAlign="center">There are no any todos ...</Text>}
+      {!hasTodo && <Text textAlign="center">There are no any todos ...</Text>}
     </>
   );
 };

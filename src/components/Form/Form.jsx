@@ -4,12 +4,12 @@ import { useRef } from 'react';
 import { nanoid } from 'nanoid';
 
 const Form = ({ onSubmit }) => {
-  const inputFef = useRef();
+  const inputRef = useRef();
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const inputValue = inputFef.current.value.trim();
+    const inputValue = inputRef.current.value.trim();
     if (!inputValue) return;
 
     onSubmit({
@@ -17,8 +17,9 @@ const Form = ({ onSubmit }) => {
       text: inputValue,
     });
 
-    inputFef.current.value = '';
+    inputRef.current.value = '';
   };
+
   return (
     <>
       <form className={style.form} onSubmit={handleSubmit}>
@@ -32,7 +33,7 @@ const Form = ({ onSubmit }) => {
           name="search"
           required
           autoFocus
-          ref={inputFef}
+          ref={inputRef}
         />
       </form>
     </>

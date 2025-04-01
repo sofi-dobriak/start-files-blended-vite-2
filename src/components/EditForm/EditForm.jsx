@@ -3,20 +3,22 @@ import { MdOutlineCancel } from 'react-icons/md';
 import style from './EditForm.module.css';
 import { useRef } from 'react';
 
-const EditForm = ({ defaultValue, updateTodo, cancelUpdate }) => {
+const EditForm = ({ updateTodo, cancelUpdate, defaultValue }) => {
   const inputRef = useRef();
 
-  const handleSubmit = e => {
+  const handleSubmitForm = e => {
     e.preventDefault();
 
-    const updateText = inputRef.current.value.trim();
-    if (!updateText) return;
+    const inputValue = inputRef.current.value.trim();
+    if (!inputValue) return;
 
-    updateTodo(updateText);
+    updateTodo(inputValue);
+
+    e.target.reset();
   };
 
   return (
-    <form onSubmit={handleSubmit} className={style.form}>
+    <form onSubmit={handleSubmitForm} className={style.form}>
       <button className={style.submitButton} type="submit">
         <RiSaveLine color="green" size="16px" />
       </button>
