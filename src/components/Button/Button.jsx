@@ -2,7 +2,7 @@ import style from './Button.module.css';
 
 const Button = ({ children, onClick, disabled }) => {
   return (
-    <button className={style.button} onClick={onClick} disabled={disabled}>
+    <button onClick={onClick} className={style.button} disabled={disabled}>
       {children}
     </button>
   );

@@ -1,16 +1,23 @@
-import { InfinitySpin } from 'react-loader-spinner';
-import css from './Loader.module.css';
+import PuffLoader from 'react-spinners/PuffLoader';
 
-const Loader = () => {
+const override = {
+  display: 'block',
+  margin: '0 auto',
+};
+
+const Loader = ({ loading }) => {
   return (
-    <div className={css.backdrop}>
-      <InfinitySpin
-        visible={true}
-        width="200"
-        color="#4fa94d"
-        ariaLabel="infinity-spin-loading"
+    <>
+      <PuffLoader
+        color="#6979f8"
+        loading={loading}
+        cssOverride={override}
+        size={50}
+        aria-label="Loading Spinner"
+        data-testid="loader"
       />
-    </div>
+    </>
   );
 };
+
 export default Loader;
