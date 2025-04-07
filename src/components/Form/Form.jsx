@@ -1,23 +1,28 @@
 import { FiSearch } from 'react-icons/fi';
 import style from './Form.module.css';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 
 const Form = ({ onSubmit }) => {
-  const inputRef = useRef();
+  const [query, setQuery] = useState('');
+
+  const handleChange = e => {
+    setQuery(e.target.value);
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const inputValue = inputRef.current.value.trim();
-    if (!inputValue) return;
+    if (!query.trim()) {
+      return alert('Can not be emplty');
+    }
 
     onSubmit({
       id: nanoid(),
-      text: inputValue,
+      value: query,
     });
 
-    inputRef.current.value = '';
+    setQuery('');
   };
 
   return (
@@ -33,7 +38,8 @@ const Form = ({ onSubmit }) => {
           name="search"
           required
           autoFocus
-          ref={inputRef}
+          value={query}
+          onChange={handleChange}
         />
       </form>
     </>

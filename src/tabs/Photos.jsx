@@ -5,22 +5,19 @@ import Text from '../components/Text/Text';
 import Loader from '../components/Loader/Loader';
 import { useEffect, useState } from 'react';
 import { getPhotos } from '../apiService/photos';
+import ImageModal from '../components/ImageModal/ImageModal';
 
 const Photos = () => {
-  const [images, setImages] = useState([]);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [loadMore, setLoadMore] = useState(false);
-
-  const handleSearch = newQuery => {
-    setQuery(newQuery.text);
-    setImages([]);
-    setPage(1);
-    setError(false);
-    setLoadMore(false);
-  };
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalSrc, setModalSrc] = useState('');
+  const [modalAlt, setModalAlt] = useState('');
 
   useEffect(() => {
     if (!query) return;
@@ -28,39 +25,77 @@ const Photos = () => {
     const fetchPhotos = async () => {
       try {
         setIsLoading(true);
-        setError(false);
 
-        const photos = await getPhotos(query, page);
+        const { photos, total_results, per_page } = await getPhotos(
+          query,
+          page
+        );
 
-        if (!photos || photos.total_results === 0) {
-          setError(true);
-          return;
+        if (!photos || total_results === 0) {
+          return setIsEmpty(true);
         }
-        setImages(prevImages => {
-          return page === 1 ? photos.photos : [...prevImages, ...photos.photos];
-        });
-        setLoadMore(photos.total_results > page * 15);
-      } catch {
-        setError(true);
+
+        setImages(prevImages => [...prevImages, ...photos]);
+        setIsVisible(page < Math.ceil(total_results / per_page));
+      } catch (error) {
+        setError(error);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPhotos();
-  }, [query, page]);
+  }, [page, query]);
 
-  const loadMoreImages = () => {
+  const onHandleSubmit = newQuery => {
+    setQuery(newQuery.value);
+    setImages([]);
+    setPage(1);
+    setError(null);
+    setIsEmpty(false);
+    setIsVisible(false);
+  };
+
+  const onLoadMoreImages = () => {
     setPage(prevPage => prevPage + 1);
+  };
+
+  const openModal = (src, alt) => {
+    setModalIsOpen(true);
+    setModalSrc(src);
+    setModalAlt(alt);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setModalSrc('');
+    setModalAlt('');
   };
 
   return (
     <>
-      <Form onSubmit={handleSearch} />
-      <PhotosGallery images={images} />
+      <Form onSubmit={onHandleSubmit} />
+      {!error && !isEmpty && !images.length && (
+        <Text>Let`s begin search 🔎</Text>
+      )}
+
+      {error && <Text>Ooops! Something went wrong...</Text>}
+      {isEmpty && <Text>Not found images</Text>}
+      {images.length > 0 && (
+        <PhotosGallery images={images} openModal={openModal} />
+      )}
       {isLoading && <Loader />}
-      {loadMore && <Button onClick={loadMoreImages}>Load more</Button>}
-      {error && <Text>Not found images</Text>}
+      {isVisible && (
+        <Button onClick={onLoadMoreImages} disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Load more'}
+        </Button>
+      )}
+      <ImageModal
+        modalIsOpen={modalIsOpen}
+        closeModal={closeModal}
+        src={modalSrc}
+        alt={modalAlt}
+      />
     </>
   );
 };
