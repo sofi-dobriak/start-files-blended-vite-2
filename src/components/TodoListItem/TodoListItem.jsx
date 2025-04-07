@@ -8,7 +8,7 @@ const TodoListItem = ({ todo, index, onDelete, onEdit }) => {
       <Text textAlign="center" marginBottom="20">
         TODO #{index + 1}
       </Text>
-      <Text>{todo.text}</Text>
+      <Text>{todo.value}</Text>
       <button
         onClick={() => onDelete(todo.id)}
         className={style.deleteButton}

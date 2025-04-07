@@ -12,14 +12,12 @@ const Todos = () => {
   const [currentTodo, setCurrentTodo] = useState({});
 
   const addNewTodo = newTodo => {
-    if (findTodo(newTodo.text)) {
+    if (findTodo(newTodo.value)) {
       alert('Already extist');
       return;
     }
 
-    setTodos(prevState => {
-      return [...prevState, newTodo];
-    });
+    setTodos(prevState => [...prevState, newTodo]);
   };
 
   useEffect(() => {
@@ -42,7 +40,7 @@ const Todos = () => {
   const updateTodo = updateText => {
     setTodos(prevTodos => {
       return prevTodos.map(todo =>
-        todo.id === currentTodo.id ? { ...todo, text: updateText } : todo
+        todo.id === currentTodo.id ? { ...todo, value: updateText } : todo
       );
     });
 
@@ -55,8 +53,8 @@ const Todos = () => {
     setCurrentTodo({});
   };
 
-  const findTodo = text => {
-    return todos.some(todo => todo.text.toLowerCase() === text.toLowerCase());
+  const findTodo = value => {
+    return todos.some(todo => todo.value.toLowerCase() === value.toLowerCase());
   };
 
   return (
@@ -66,7 +64,7 @@ const Todos = () => {
         <EditForm
           updateTodo={updateTodo}
           cancelUpdate={cancelUpdate}
-          defaultValue={currentTodo.text}
+          defaultValue={currentTodo.value}
         />
       )}
 
