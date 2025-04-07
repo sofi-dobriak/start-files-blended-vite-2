@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Form from '../components/Form/Form';
 import TodoList from '../components/TodoList/TodoList';
 import Text from '../components/Text/Text';
 import EditForm from '../components/EditForm/EditForm';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const Todos = () => {
-  const [todos, setTodos] = useState(
-    () => JSON.parse(localStorage.getItem('todos-key')) ?? []
-  );
+  const [todos, setTodos] = useLocalStorage('todos-key', []);
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodo, setCurrentTodo] = useState({});
 
@@ -19,10 +18,6 @@ const Todos = () => {
 
     setTodos(prevState => [...prevState, newTodo]);
   };
-
-  useEffect(() => {
-    localStorage.setItem('todos-key', JSON.stringify(todos));
-  }, [todos]);
 
   const deleteTodo = todoID => {
     setTodos(prevState => {

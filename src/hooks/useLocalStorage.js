@@ -1,8 +1,23 @@
-// import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-export const useLocalStorage = () => {
-  // Тут повинен бути власний хук для збереження і отримання даних з localStorage
-  // Даний хук повинен отримувати key, defaultValue і повертати дані з localStorage,
-  // якщо дані були збережені.
-  // Якщо в localStorage не були збережені дані з ключем key, то хук повинен повертати defaultValue.
+export const useLocalStorage = (key, defaultValue) => {
+  const [storageValue, setStorageValue] = useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+      console.log(error);
+      return defaultValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(storageValue));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [key, storageValue]);
+
+  return [storageValue, setStorageValue];
 };
